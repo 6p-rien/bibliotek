@@ -3,7 +3,7 @@ FROM eclipse-temurin:21-jdk
 
 WORKDIR /app
 
-COPY /app/target/*.jar bibliotek-boot.jar
+COPY ./target/*.jar bibliotek-boot.jar
 
 EXPOSE 8080
 

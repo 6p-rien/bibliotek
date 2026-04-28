@@ -2,7 +2,7 @@ FROM nginx:latest
 
 COPY nginx-default.conf /etc/nginx/conf.d/default.conf
 
-COPY --from=builder /app/dist/bibliotek-angular/browser /usr/share/nginx/html
+COPY ./dist/bibliotek-angular/browser /usr/share/nginx/html
 
 EXPOSE 80
 
