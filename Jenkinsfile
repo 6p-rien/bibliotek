@@ -1,0 +1,69 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Maven build') {
+            agent {
+                docker {
+                    image 'maven:3.9.11-eclipse-temurin-21'
+                    args '--network devops'
+                    reuseNode true
+                }
+            }
+            steps {
+                dir('bibliotek-boot') {
+                    withSonarQubeEnv('sonarqube') {
+                        sh "mvn verify sonar:sonar -Dsonar.projectKey=bibliotek-boot -Dsonar.projectName='bibliotek-boot'"
+                    }
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+
+        stage('NPM build') {
+            // Demander à Jenkins d'exécuter le builder dans un container Docker
+            agent {
+                docker {
+                    image 'node:lts-bullseye'
+                    // args '''
+                    //     -v $HOME/.npm:/root/.npm:z
+                    //     -u root
+                    // '''
+                    args '--network devops'
+                    reuseNode true // Permet de garder le même workspace entre les différents agents (any & docker)
+                }
+            }
+
+            steps {
+                dir('bibliotek-angular') {
+                    sh 'npm install'
+
+                    withSonarQubeEnv('sonarqube') {
+                        sh './node_modules/.bin/sonar-scanner -Dsonar.projectKey=bibliotek-angular'
+                    }
+                    waitForQualityGate abortPipeline: true
+
+                    sh './node_modules/.bin/ng build'
+                }
+            }
+        }
+
+        stage('Docker build') {
+            steps {
+                dir('bibliotek-boot') {
+                    sh 'docker build -t bibliotek-boot .'
+                }
+                dir('bibliotek-angular') {
+                    sh 'docker build -t bibliotek-angular .'
+                }
+            }
+        }
+
+        stage('Docker deploy') {
+            steps {
+                sh 'docker compose up -d --no-deps boot angular'
+            }
+        }
+
+    }
+}
