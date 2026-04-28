@@ -19,14 +19,14 @@ pipeline {
 
             steps {
                 withSonarQubeEnv('sonar') {
-                    sh "mvn verify sonar:sonar -Dsonar.projectKey=biblio-back -Dsonar.projectName='biblio-back'"
+                    sh "mvn verify sonar:sonar -Dsonar.projectKey=bibliotek-boot -Dsonar.projectName='bibliotek-boot'"
                 }
             }
         }
 
         stage('Docker build') {
             steps {
-                sh 'docker build -t biblio-back .'
+                sh 'docker build -t bibliotek-boot .'
             }
         }
     }
