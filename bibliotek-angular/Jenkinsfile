@@ -23,6 +23,7 @@ pipeline {
                     withSonarQubeEnv('sonarqube') {
                         sh './node_modules/.bin/sonar-scanner -Dsonar.projectKey=bibliotek-angular'
                     }
+                    waitForQualityGate abortPipeline: true
 
                     sh './node_modules/.bin/ng build'
                 }

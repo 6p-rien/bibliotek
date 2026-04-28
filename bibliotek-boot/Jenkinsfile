@@ -22,6 +22,7 @@ pipeline {
                     withSonarQubeEnv('sonarqube') {
                         sh "mvn verify sonar:sonar -Dsonar.projectKey=bibliotek-boot -Dsonar.projectName='bibliotek-boot'"
                     }
+                    waitForQualityGate abortPipeline: true
                 }
             }
         }
@@ -31,6 +32,12 @@ pipeline {
                 dir('bibliotek-boot') {
                     sh 'docker build -t bibliotek-boot .'
                 }
+            }
+        }
+
+        stage('Docker deploy') {
+            steps {
+                sh 'docker compose up -d --no-deps boot'
             }
         }
     }
