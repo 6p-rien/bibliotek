@@ -7,10 +7,11 @@ pipeline {
             agent {
                 docker {
                     image 'node:lts-bullseye'
-                    args '''
-                        -v $HOME/.npm:/root/.npm:z
-                        -u root
-                    '''
+                    // args '''
+                    //     -v $HOME/.npm:/root/.npm:z
+                    //     -u root
+                    // '''
+                    args '--network devops'
                     reuseNode true // Permet de garder le même workspace entre les différents agents (any & docker)
                 }
             }
