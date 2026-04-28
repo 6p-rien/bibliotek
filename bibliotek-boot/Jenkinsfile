@@ -29,7 +29,7 @@ pipeline {
         stage('Docker build') {
             steps {
                 dir('bibliotek-boot') {
-                    sh 'docker build -t bibliotek -boot .'
+                    sh 'docker build -t bibliotek-boot .'
                 }
             }
         }
