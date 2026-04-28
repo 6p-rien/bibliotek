@@ -16,19 +16,23 @@ pipeline {
             }
 
             steps {
-                sh 'npm install'
+                dir('bibliotek-angular') {
+                    sh 'npm install'
 
-                withSonarQubeEnv('sonarqube') {
-                    sh './node_modules/.bin/sonar-scanner -Dsonar.projectKey=bibliotek-angular'
+                    withSonarQubeEnv('sonarqube') {
+                        sh './node_modules/.bin/sonar-scanner -Dsonar.projectKey=bibliotek-angular'
+                    }
+
+                    sh './node_modules/.bin/ng build'
                 }
-
-                sh './node_modules/.bin/ng build'
             }
         }
 
         stage('Docker build') {
             steps {
-                sh 'docker build -t bibliotek-angular .'
+                dir('bibliotek-angular') {
+                    sh 'docker build -t bibliotek-angular .'
+                }
             }
         }
 
